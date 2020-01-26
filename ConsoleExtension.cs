@@ -39,9 +39,14 @@ namespace AcuShell
                     ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, "Result yielded no result.");
                 }
             }
-            catch(CompilationErrorException ex)
+            catch(AggregateException ae)
             {
-                ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, ex.Message);
+                var sb = new System.Text.StringBuilder();
+                foreach (CompilationErrorException ex in ae.InnerExceptions)
+                {
+                    sb.AppendLine(ex.Message);
+                }
+                ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, sb.ToString());
             }
 
             return adapter.Get();

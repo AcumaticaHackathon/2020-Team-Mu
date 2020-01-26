@@ -1,6 +1,9 @@
 ﻿"use strict";
 
 var editor = null;
+var completionItemProvider = null;
+var signatureHelpProvider = null;
+var hoverProvider = null;
 
 function BeforeLoadConsolePanel() {
 }
@@ -115,7 +118,7 @@ using PX.Objects.SO;
             return template.replace('{BUFFER}', buffer).replace('{GRAPH_TYPE}', graphType);
         }
 
-        monaco.languages.registerCompletionItemProvider('csharp', {
+        completionItemProvider = monaco.languages.registerCompletionItemProvider('csharp', {
             triggerCharacters: ["."],
             provideCompletionItems: function (model, position) {
                 let word = model.getWordUntilPosition(position);
@@ -193,7 +196,7 @@ using PX.Objects.SO;
             }
         });
 
-        monaco.languages.registerSignatureHelpProvider('csharp', {
+        signatureHelpProvider = monaco.languages.registerSignatureHelpProvider('csharp', {
             signatureHelpTriggerCharacters: ["(", ","],
             provideSignatureHelp: function (model, position) {
                 let params = {
@@ -241,7 +244,7 @@ using PX.Objects.SO;
             }
         });
 
-        monaco.languages.registerHoverProvider('csharp', {
+        hoverProvider = monaco.languages.registerHoverProvider('csharp', {
             provideHover: function (model, position) {
                 let params = {
                     "Buffer": getParsedBuffer(model.getValue()),
@@ -286,4 +289,16 @@ using PX.Objects.SO;
             }
         });
     });
+}
+
+function BeforeHideConsolePanel() {
+    //Very important otherwise we end up with duplicates in the code completion and other helpers
+    completionItemProvider.dispose();
+    signatureHelpProvider.dispose();
+    hoverProvider.dispose();
+    editor.dispose();
+}
+
+function AfterHideConsolePanel() {
+
 }

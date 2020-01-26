@@ -26,7 +26,7 @@ namespace AcuShell
         [PXButton(VisibleOnDataSource = false, CommitChanges = true)]
         public IEnumerable ConsoleRunAction(PXAdapter adapter)
         {
-            const string OutputStartTag = "<p style='font-family: Consolas'>"; //We should edit the CSS of the editor instead
+            const string OutputStartTag = "<p style='font-family: Consolas; font-size: 10pt; line-height: 16px'>"; //We should edit the CSS of the editor instead
             const string OutputEndTag = "</p>";
 
             try

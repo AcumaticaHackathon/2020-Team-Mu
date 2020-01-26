@@ -52,6 +52,9 @@ namespace AcuShell
             panel.ClientEvents.BeforeLoad = "AfterLoadConsolePanel";
             panel.ClientEvents.BeforeShow = "BeforeShowConsolePanel";
             panel.ClientEvents.AfterShow = "AfterShowConsolePanel";
+            panel.ClientEvents.BeforeHide = "BeforeHideConsolePanel";
+            panel.ClientEvents.AfterHide = "AfterHideConsolePanel";
+
             panel.ApplyStyleSheetSkin(controller.Page);
 
             var ds = PXPage.GetDefaultDataSource(controller.Page);
@@ -69,11 +72,7 @@ namespace AcuShell
             form.AutoSize.Enabled = true;
 
             var cc = form.TemplateContainer.Controls;
-
-            var consoleOutput = new PXHtmlView { ID = "pnlConsoleOutput", DataField = nameof(AcuShell.ConsoleFields.Output), Height = Unit.Pixel(200), Width = Unit.Percentage(100) };
-            consoleOutput.AutoSize.Enabled = true;
-
-            cc.Add(consoleOutput);
+            cc.Add(new PXHtmlView { ID = "pnlConsoleOutput", DataField = nameof(AcuShell.ConsoleFields.Output), Height = Unit.Pixel(200), Width = Unit.Percentage(100) });
             cc.Add(new PXTextEdit { ID = "pnlConsoleInput", DataField = nameof(AcuShell.ConsoleFields.Input) });
             cc.Add(new PXTextEdit { ID = "pnlGraphType", DataField = nameof(AcuShell.ConsoleFields.GraphType) });
 

@@ -33,7 +33,7 @@ namespace AcuShell
             try
             {
                 var genericScope = typeof(ConsoleGlobalScope<>);
-                Type[] typeArgs = { Base.GetType() };
+                Type[] typeArgs = { PX.Api.CustomizedTypeManager.GetTypeNotCustomized(Base) };
                 var typedScopedType = genericScope.MakeGenericType(typeArgs);
                 object typedScope = Activator.CreateInstance(typedScopedType);
                 ((IHaveGraph)typedScope).SetGraph(Base);

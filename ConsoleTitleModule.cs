@@ -75,7 +75,8 @@ namespace AcuShell
 
             cc.Add(consoleOutput);
             cc.Add(new PXTextEdit { ID = "pnlConsoleInput", DataField = nameof(AcuShell.ConsoleFields.Input) });
-           
+            cc.Add(new PXTextEdit { ID = "pnlGraphType", DataField = nameof(AcuShell.ConsoleFields.GraphType) });
+
             ((IParserAccessor)panel).AddParsedSubObject(form);
 
             var editor = new System.Web.UI.WebControls.Panel { ID = "pnlConsoleEditor", Height = Unit.Pixel(200), Width = Unit.Percentage(100) };

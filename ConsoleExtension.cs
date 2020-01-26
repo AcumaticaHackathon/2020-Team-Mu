@@ -19,12 +19,16 @@ namespace AcuShell
             if (Base.GetType() != typeof(PXGraph) && Base.PrimaryItemType != null)
             {
                 PXAction runAction = PXNamedAction.AddAction(Base, Base.PrimaryItemType, nameof(ConsoleRunAction), "Run", new PXButtonDelegate(ConsoleRunAction));
+                ConsoleView.Cache.SetValueExt<ConsoleFields.graphType>(ConsoleView.Current, Base.GetType().FullName); //For code completion on Graph.
             }
         }
 
         [PXButton(VisibleOnDataSource = false, CommitChanges = true)]
         public IEnumerable ConsoleRunAction(PXAdapter adapter)
         {
+            const string OutputStartTag = "<p style='font-family: Consolas'>"; //We should edit the CSS of the editor instead
+            const string OutputEndTag = "</p>";
+
             try
             {
                 var genericScope = typeof(ConsoleGlobalScope<>);
@@ -39,11 +43,11 @@ namespace AcuShell
             
                 if (result != null)
                 {
-                    ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, ConsoleView.Current.Output + "<p>" + result.ToString() + "</p>");
+                    ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, ConsoleView.Current.Output + OutputStartTag + result.ToString() + OutputEndTag);
                 }
                 else
                 {
-                    ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, ConsoleView.Current.Output + "<p>" + "Result yielded no result." + "</p>");
+                    ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, ConsoleView.Current.Output + OutputStartTag + "Execution yielded no result." + OutputEndTag);
                 }
             }
             catch(AggregateException ae)
@@ -53,7 +57,7 @@ namespace AcuShell
                 {
                     sb.AppendLine(ex.Message);
                 }
-                ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, ConsoleView.Current.Output + "<p>" + sb.ToString() + "</p>");
+                ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, ConsoleView.Current.Output + OutputStartTag + sb.ToString() + OutputEndTag);
             }
 
             return adapter.Get();
@@ -83,6 +87,10 @@ namespace AcuShell
     [Serializable]
     public class ConsoleFields : IBqlTable
     {
+        public abstract class graphType : IBqlField { }
+        [PXUIField(Visible = false)]
+        public string GraphType { get; set; }
+
         public abstract class input : IBqlField { }
         [PXUIField(Visible = false)]
         public string Input { get; set; }

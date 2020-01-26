@@ -71,32 +71,32 @@ function AfterShowConsolePanel() {
             if (endIndex < 0) {
                 return summary;
             }
-
-            return summary.slice(0, endIndex).replace(/[\n\r]/g, ' ');
+            
+            return summary.slice(0, endIndex).replace(/(<([^>]+)>)/ig, ' ').replace(/(\r\n|\n|\r)/gm, '');
         }
 
-        var template = `using System;
-            using System.Collections;
-            using System.Collections.Generic;
-            using System.Linq;
-            using PX.Data;
-            using PX.Objects.GL;
-            using PX.Objects.CM;
-            using PX.Objects.CS;
-            using PX.Objects.CR;
-            using PX.Objects.TX;
-            using PX.Objects.IN;
-            using PX.Objects.EP;
-            using PX.Objects.AP;
-            using PX.TM;
-            using SOOrder = PX.Objects.SO.SOOrder;
-            using SOLine = PX.Objects.SO.SOLine;
-            using Avalara.AvaTax.Adapter;
-            using Avalara.AvaTax.Adapter.TaxService;
-            using AvaAddress = Avalara.AvaTax.Adapter.AddressService;
-            using AvaMessage = Avalara.AvaTax.Adapter.Message;
-            using PX.Objects;
-            using PX.Objects.PO;
+        //Hackathon Shouldn't be hardcoded like that!
+        let templateBufferLineNumber = 26;
+        let fileName = "C:\\Program Files\\Acumatica ERP\\AcumaticaDemo2019R2\\CstDesigner\\Console_OmniSharp\\Console.cs";
+
+        function getParsedBuffer(buffer) {
+            let template = `using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using PX.Data;
+using PX.Objects.GL;
+using PX.Objects.CM;
+using PX.Objects.CS;
+using PX.Objects.CR;
+using PX.Objects.TX;
+using PX.Objects.IN;
+using PX.Objects.EP;
+using PX.Objects.AP;
+using PX.TM;
+using PX.Objects;
+using PX.Objects.PO;
+using PX.Objects.SO;
 
             namespace PX.Objects
             {
@@ -104,13 +104,16 @@ function AfterShowConsolePanel() {
 	            {
                     public void Method()
                     {
-{0}
+                        var Graph = new {GRAPH_TYPE}();
+{BUFFER}
                     }
-	            }
+	            }               
             }
         `;
 
-        var templateLineNumber = 30;
+            let graphType = px_alls['pnlGraphType'].getValue();
+            return template.replace('{BUFFER}', buffer).replace('{GRAPH_TYPE}', graphType);
+        }
 
         monaco.languages.registerCompletionItemProvider('csharp', {
             triggerCharacters: ["."],
@@ -120,17 +123,17 @@ function AfterShowConsolePanel() {
                 if (word) wordToComplete = word.word;
 
                 var range = {
-                    startLineNumber: position.lineNumber,
-                    endLineNumber: position.lineNumber,
+                    startLineNumber: templateBufferLineNumber, //position.lineNumber,
+                    endLineNumber: templateBufferLineNumber, //position.lineNumber,
                     startColumn: word.startColumn,
                     endColumn: word.endColumn
                 };
 
                 let params = {
-                    "Buffer": template.replace('{0}', model.getValue()),
-                    "FileName": "C:\Program Files\Acumatica ERP\AcumaticaDemo2019R2\CstDesigner\Console_OmniSharp\Console.cs",
+                    "Buffer": getParsedBuffer(model.getValue()),
+                    "FileName": fileName,
                     "Column": position.column,
-                    "Line": templateLineNumber,
+                    "Line": templateBufferLineNumber, //position.lineNumber
                     "WantDocumentationForEveryCompletionResult": true,
                     "WantKind": true,
                     "WantReturnType": true,
@@ -190,84 +193,84 @@ function AfterShowConsolePanel() {
             }
         });
 
-        //monaco.languages.registerSignatureHelpProvider('csharp', {
-        //    signatureHelpTriggerCharacters: ["(", ","],
-        //    provideSignatureHelp: function (model, position) {
-        //        let params = {
-        //            "Buffer": model.getValue(),
-        //            "FileName": "C:\Program Files\Acumatica ERP\AcumaticaDemo2019R2\CstDesigner\Console_OmniSharp\Console.cs",
-        //            "Column": position.column,
-        //            "Line": position.lineNumber
-        //        };
+        monaco.languages.registerSignatureHelpProvider('csharp', {
+            signatureHelpTriggerCharacters: ["(", ","],
+            provideSignatureHelp: function (model, position) {
+                let params = {
+                    "Buffer": getParsedBuffer(model.getValue()),
+                    "FileName": fileName,
+                    "Column": position.column,
+                    "Line": templateBufferLineNumber
+                };
 
-        //        return xhr('../../editor?c=signaturehelp', params).then(function (res) {
-        //            if (!res.responseText) return;
-        //            let signatureInfo = JSON.parse(res.responseText);
+                return xhr('../../editor?c=signaturehelp', params).then(function (res) {
+                    if (!res.responseText) return;
+                    let signatureInfo = JSON.parse(res.responseText);
 
-        //            let signatureHelp = {
-        //                activeSignature: signatureInfo.ActiveSignature,
-        //                activeParameter: signatureInfo.ActiveParameter,
-        //                signatures: new Array(signatureInfo.Signatures.length)
-        //            };
+                    let signatureHelp = {
+                        activeSignature: signatureInfo.ActiveSignature,
+                        activeParameter: signatureInfo.ActiveParameter,
+                        signatures: new Array(signatureInfo.Signatures.length)
+                    };
 
-        //            //TODO: Refactor (case sensitivity?)
-        //            for (let i = 0; i < signatureInfo.Signatures.length; i++) {
-        //                let signature = signatureInfo.Signatures[i];
+                    //TODO: Refactor (case sensitivity?)
+                    for (let i = 0; i < signatureInfo.Signatures.length; i++) {
+                        let signature = signatureInfo.Signatures[i];
+                        
+                        signatureHelp.signatures[i] = {
+                            label: signature.Label,
+                            documentation: extractSummaryText(signature.Documentation),
+                            parameters: new Array(signature.Parameters.length)
+                        };
 
-        //                signatureHelp.signatures[i] = {
-        //                    label: signature.Label,
-        //                    documentation: extractSummaryText(signature.Documentation),
-        //                    parameters: new Array(signature.Parameters.length)
-        //                };
+                        for (let j = 0; j < signature.Parameters.length; j++) {
+                            signatureHelp.signatures[i].parameters[j] = {
+                                label: signature.Parameters[j].Label,
+                                documentation: signature.Parameters[j].Documentation
+                            };
+                        };
+                    }
 
-        //                for (let j = 0; j < signature.Parameters.length; j++) {
-        //                    signatureHelp.signatures[i].parameters[j] = {
-        //                        label: signature.Parameters[j].Label,
-        //                        documentation: signature.Parameters[j].Documentation
-        //                    };
-        //                };
-        //            }
+                    return {
+                        value: signatureHelp,
+                        dispose: function () { }
+                    };
+                });
 
-        //            return {
-        //                value: signatureHelp,
-        //                dispose: function () { }
-        //            };
-        //        });
+                return null;
+            }
+        });
 
-        //        return null;
-        //    }
-        //});
+        monaco.languages.registerHoverProvider('csharp', {
+            provideHover: function (model, position) {
+                let params = {
+                    "Buffer": getParsedBuffer(model.getValue()),
+                    "FileName": fileName,
+                    "Column": position.column,
+                    "Line": templateBufferLineNumber,
+                    "IncludeDocumentation": true,
+                };
 
-        //monaco.languages.registerHoverProvider('csharp', {
-        //    provideHover: function (model, position) {
-        //        let params = {
-        //            "Buffer": model.getValue(),
-        //            "FileName": "C:\Program Files\Acumatica ERP\AcumaticaDemo2019R2\CstDesigner\Console_OmniSharp\Console.cs",
-        //            "Column": position.column,
-        //            "Line": position.lineNumber,
-        //            "IncludeDocumentation": true,
-        //        };
+                return xhr('../../editor?c=typelookup', params).then(function (res) {
+                    if (!res.responseText) return;
+                    let typeinfo = JSON.parse(res.responseText);
 
-        //        return xhr('../../editor?c=typelookup', params).then(function (res) {
-        //            if (!res.responseText) return;
-        //            let typeinfo = JSON.parse(res.responseText);
+                    return {
+                        range: new monaco.Range(1, 1, model.getLineCount(), model.getLineMaxColumn(model.getLineCount())),
+                        contents: [
+                            typeinfo.Documentation,
+                            { language: 'cscript', value: typeinfo.Type }
+                        ]
+                    }
+                });
 
-        //            return {
-        //                range: new monaco.Range(1, 1, model.getLineCount(), model.getLineMaxColumn(model.getLineCount())),
-        //                contents: [
-        //                    typeinfo.Documentation,
-        //                    { language: 'cscript', value: typeinfo.Type }
-        //                ]
-        //            }
-        //        });
-
-        //        return null;
-        //    }
-        //});
+                return null;
+            }
+        });
 
         editor = monaco.editor.create(document.getElementById('ctl00_pnlConsole_pnlConsoleEditor'), {
             language: 'csharp',
-            //theme: 'vs-dark', messes up intellisense. Maybe hc-black?
+            //theme: 'vs-dark', //vs-dark messes up intellisense. Maybe hc-black?
             wordWrap: 'on',
             automaticLayout: true,
             minimap: {
@@ -276,9 +279,11 @@ function AfterShowConsolePanel() {
         });
 
         var myBinding = editor.addCommand(monaco.KeyCode.Enter, function () {
-            px_alls['pnlConsoleInput'].updateValue(editor.getValue());
+            if (editor.getValue() != '') {
+                px_alls['pnlConsoleInput'].updateValue(editor.getValue());
             editor.setValue('');
-            px_alls['ds'].executeCallback('ConsoleRunAction');
+                px_alls['ds'].executeCallback('ConsoleRunAction');
+            }
         });
     });
 }

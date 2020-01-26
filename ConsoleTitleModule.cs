@@ -37,14 +37,14 @@ namespace AcuShell
                 ID = _panelID,
                 Width = Unit.Pixel(500),
                 Height = Unit.Pixel(350),
-                Caption = "Acumatica Shell",
+                Caption = "Acumatica Console",
                 CaptionVisible = true,
                 AutoRepaint = true,
                 BlockPage = false,
                 LoadOnDemand = true, //Needed otherwise ClientEvents.AfterShow won't run on 2nd open of the panel
-                //CreateOnDemand = CreateOnDemandMode.,
                 AutoReload = true,
                 Position = PanelPosition.Manual,
+                Overflow = OverflowType.Hidden
             };
 
 
@@ -70,7 +70,7 @@ namespace AcuShell
 
             var cc = form.TemplateContainer.Controls;
 
-            var consoleOutput = new PXTextEdit { ID = "pnlConsoleOutput", DataField = nameof(AcuShell.ConsoleFields.Output), TextMode = TextBoxMode.MultiLine, SelectOnFocus = false, Wrap = false, Height = Unit.Pixel(200), Width = Unit.Percentage(100) };
+            var consoleOutput = new PXHtmlView { ID = "pnlConsoleOutput", DataField = nameof(AcuShell.ConsoleFields.Output), Height = Unit.Pixel(200), Width = Unit.Percentage(99) };
             consoleOutput.AutoSize.Enabled = true;
 
             cc.Add(consoleOutput);
@@ -78,7 +78,7 @@ namespace AcuShell
            
             ((IParserAccessor)panel).AddParsedSubObject(form);
 
-            var editor = new System.Web.UI.WebControls.Panel { ID = "pnlConsoleEditor", Height = Unit.Pixel(75), Width = Unit.Percentage(100) };
+            var editor = new System.Web.UI.WebControls.Panel { ID = "pnlConsoleEditor", Height = Unit.Pixel(70), Width = Unit.Percentage(99) };
             ((IParserAccessor)panel).AddParsedSubObject(editor);
 
             controller.AppendControl(panel);

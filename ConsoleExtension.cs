@@ -32,11 +32,11 @@ namespace AcuShell
             
                 if (result != null)
                 {
-                    ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, ConsoleView.Current.Output + "\r\n" + result.ToString());
+                    ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, ConsoleView.Current.Output + "<p>" + result.ToString() + "</p>");
                 }
                 else
                 {
-                    ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, ConsoleView.Current.Output + "\r\n" + "Result yielded no result.");
+                    ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, ConsoleView.Current.Output + "<p>" + "Result yielded no result." + "</p>");
                 }
             }
             catch(AggregateException ae)
@@ -46,7 +46,7 @@ namespace AcuShell
                 {
                     sb.AppendLine(ex.Message);
                 }
-                ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, ConsoleView.Current.Output + "\r\n" + sb.ToString());
+                ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, ConsoleView.Current.Output + "<p>" + sb.ToString() + "</p>");
             }
 
             return adapter.Get();

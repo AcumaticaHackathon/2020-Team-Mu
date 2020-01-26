@@ -344,5 +344,5 @@ function BeforeHideConsolePanel() {
 }
 
 function AfterHideConsolePanel() {
-
+    px_alls['ds'].executeCallback('ConsoleClearOutputAction');
 }

@@ -19,6 +19,7 @@ namespace AcuShell
             if (Base.GetType() != typeof(PXGraph) && Base.PrimaryItemType != null)
             {
                 PXAction runAction = PXNamedAction.AddAction(Base, Base.PrimaryItemType, nameof(ConsoleRunAction), "Run", new PXButtonDelegate(ConsoleRunAction));
+                PXAction clearOutputAction = PXNamedAction.AddAction(Base, Base.PrimaryItemType, nameof(ConsoleClearOutputAction), "ConsoleClearOutput", new PXButtonDelegate(ConsoleClearOutputAction));
                 ConsoleView.Cache.SetValueExt<ConsoleFields.graphType>(ConsoleView.Current, Base.GetType().FullName); //For code completion on Graph.
             }
         }
@@ -60,6 +61,13 @@ namespace AcuShell
                 ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, ConsoleView.Current.Output + OutputStartTag + sb.ToString() + OutputEndTag);
             }
 
+            return adapter.Get();
+        }
+
+        [PXButton(VisibleOnDataSource = false, CommitChanges = false)]
+        public IEnumerable ConsoleClearOutputAction(PXAdapter adapter)
+        {
+            ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, String.Empty);
             return adapter.Get();
         }
     }

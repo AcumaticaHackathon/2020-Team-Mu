@@ -32,11 +32,11 @@ namespace AcuShell
             
                 if (result != null)
                 {
-                    ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, result.ToString());
+                    ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, ConsoleView.Current.Output + "\r\n" + result.ToString());
                 }
                 else
                 {
-                    ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, "Result yielded no result.");
+                    ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, ConsoleView.Current.Output + "\r\n" + "Result yielded no result.");
                 }
             }
             catch(AggregateException ae)
@@ -46,7 +46,7 @@ namespace AcuShell
                 {
                     sb.AppendLine(ex.Message);
                 }
-                ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, sb.ToString());
+                ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, ConsoleView.Current.Output + "\r\n" + sb.ToString());
             }
 
             return adapter.Get();
@@ -57,6 +57,7 @@ namespace AcuShell
     public class ConsoleFields : IBqlTable
     {
         public abstract class input : IBqlField { }
+        [PXUIField(Visible = false)]
         public string Input { get; set; }
 
         public abstract class output : IBqlField { }

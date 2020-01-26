@@ -42,10 +42,15 @@ namespace AcuShell
                 AutoRepaint = true,
                 BlockPage = false,
                 LoadOnDemand = true, //Needed otherwise ClientEvents.AfterShow won't run on 2nd open of the panel
-                CreateOnDemand = CreateOnDemandMode.False,
+                //CreateOnDemand = CreateOnDemandMode.,
                 AutoReload = true,
                 Position = PanelPosition.Manual,
             };
+
+
+            panel.ClientEvents.BeforeLoad = "BeforeLoadConsolePanel";
+            panel.ClientEvents.BeforeLoad = "AfterLoadConsolePanel";
+            panel.ClientEvents.BeforeShow = "BeforeShowConsolePanel";
             panel.ClientEvents.AfterShow = "AfterShowConsolePanel";
             panel.ApplyStyleSheetSkin(controller.Page);
 
@@ -61,32 +66,20 @@ namespace AcuShell
                 AutoRepaint = true
             };
             form.ApplyStyleSheetSkin(controller.Page);
+            form.AutoSize.Enabled = true;
+
             var cc = form.TemplateContainer.Controls;
-            cc.Add(new PXTextEdit { ID = "pnlConsoleInput", DataField = nameof(AcuShell.ConsoleFields.Input), TextMode = TextBoxMode.MultiLine, SelectOnFocus = false, Wrap = false, Height = Unit.Pixel(230), Width = Unit.Percentage(99) });
-            cc.Add(new PXTextEdit { ID = "pnlConsoleOutput", DataField = nameof(AcuShell.ConsoleFields.Output), TextMode = TextBoxMode.MultiLine, SelectOnFocus = false, Wrap = false, Height = Unit.Pixel(50), Width = Unit.Percentage(99) });
-            
-            PXPanel buttonsPanel = new PXPanel()
-            {
-                ID = "pnlAcuShellButtons",
-                SkinID = "Buttons",
-            };
-            buttonsPanel.ApplyStyleSheetSkin(controller.Page);
 
-            PXButton runButton = new PXButton()
-            {
-                ID = "btnAcuShellRun",
-                Text = "Run"
-            };
+            var consoleOutput = new PXTextEdit { ID = "pnlConsoleOutput", DataField = nameof(AcuShell.ConsoleFields.Output), TextMode = TextBoxMode.MultiLine, SelectOnFocus = false, Wrap = false, Height = Unit.Pixel(200), Width = Unit.Percentage(100) };
+            consoleOutput.AutoSize.Enabled = true;
 
-            runButton.AutoCallBack.Target = ds.ID;
-            runButton.AutoCallBack.Command = nameof(ConsoleExtension.ConsoleRunAction);
-            runButton.AutoCallBack.Behavior.RepaintControls = RepaintMode.All;
-
-            buttonsPanel.TemplateContainer.Controls.Add(runButton);
-
+            cc.Add(consoleOutput);
+            cc.Add(new PXTextEdit { ID = "pnlConsoleInput", DataField = nameof(AcuShell.ConsoleFields.Input) });
+           
             ((IParserAccessor)panel).AddParsedSubObject(form);
-            ((IParserAccessor)panel).AddParsedSubObject(buttonsPanel);
-            runButton.ApplyStyleSheetSkin(controller.Page);
+
+            var editor = new System.Web.UI.WebControls.Panel { ID = "pnlConsoleEditor", Height = Unit.Pixel(75), Width = Unit.Percentage(100) };
+            ((IParserAccessor)panel).AddParsedSubObject(editor);
 
             controller.AppendControl(panel);
         }

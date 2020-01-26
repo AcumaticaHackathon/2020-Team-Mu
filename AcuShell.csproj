@@ -219,6 +219,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>xcopy "C:\Program Files\Acumatica ERP\AcumaticaDemo2019R2\Scripts\console.js" $(ProjectDir)Scripts</PreBuildEvent>
+    <PreBuildEvent>xcopy "C:\Program Files\Acumatica ERP\AcumaticaDemo2019R2\Scripts\console.js" $(ProjectDir)Scripts /y</PreBuildEvent>
   </PropertyGroup>
 </Project>

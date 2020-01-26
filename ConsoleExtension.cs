@@ -10,6 +10,8 @@ namespace AcuShell
 {
     public class ConsoleExtension : PXGraphExtension<PXGraph>
     {
+        public static ScriptState<object> CurrentState { get; set; }
+        public static Type CurrentType;
         public PXFilter<ConsoleFields> ConsoleView;
 
         public override void Initialize()
@@ -33,25 +35,64 @@ namespace AcuShell
             try
             {
                 var genericScope = typeof(ConsoleGlobalScope<>);
-                Type[] typeArgs = { PX.Api.CustomizedTypeManager.GetTypeNotCustomized(Base) };
-                var typedScopedType = genericScope.MakeGenericType(typeArgs);
+                var typeNotCustomized = PX.Api.CustomizedTypeManager.GetTypeNotCustomized(Base);
+                var typedScopedType = genericScope.MakeGenericType(typeNotCustomized);
                 object typedScope = Activator.CreateInstance(typedScopedType);
                 ((IHaveGraph)typedScope).SetGraph(Base);
 
                 var assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(it => !it.IsDynamic && !it.ReflectionOnly && it.ManifestModule.Name != "<Unknown>");
-                var result = Task.Run(() => CSharpScript.EvaluateAsync<object>(ConsoleView.Current.Input, globalsType: typedScopedType,
-                    options: ScriptOptions.Default.WithReferences(assemblies), globals: typedScope)).Result;
-            
-                if (result != null)
-                {
-                    ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, ConsoleView.Current.Output + OutputStartTag + result.ToString() + OutputEndTag);
+
+                //TODO This is also hardcoded in the console JS file
+                var imports = new string[] { "System",
+                    "System.Collections",
+                    "System.Collections.Generic",
+                    "System.Linq",
+                    "PX.Data",
+                    "PX.Objects.GL",
+                    "PX.Objects.CM",
+                    "PX.Objects.CS",
+                    "PX.Objects.CR",
+                    "PX.Objects.TX",
+                    "PX.Objects.IN",
+                    "PX.Objects.EP",
+                    "PX.Objects.AP",
+                    "PX.TM",
+                    "PX.Objects",
+                    "PX.Objects.PO",
+                    "PX.Objects.SO"
+                };
+
+                ScriptState<object> result;
+                if(CurrentState == null || CurrentType != typeNotCustomized)
+                { 
+                    result = Task.Run(() => CSharpScript.RunAsync<object>(ConsoleView.Current.Input, globalsType: typedScopedType,
+                        options: ScriptOptions.Default
+                            .WithReferences(assemblies)
+                            .WithImports(imports)
+                            , globals: typedScope)).Result;
+
+                    CurrentState = result;
+                    CurrentType = typeNotCustomized;
                 }
                 else
                 {
-                    ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, ConsoleView.Current.Output + OutputStartTag + "Execution yielded no result." + OutputEndTag);
+                    result = CurrentState.ContinueWithAsync(ConsoleView.Current.Input).Result;
+                }
+
+                if (result?.ReturnValue != null)
+                {
+                    ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, ConsoleView.Current.Output + OutputStartTag + result.ReturnValue.ToString() + OutputEndTag);
+                }
+                else
+                {
+                    ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, ConsoleView.Current.Output + OutputStartTag + "Expression has been evaluated and has no value." + OutputEndTag);
                 }
             }
-            catch(AggregateException ae)
+            catch(CompilationErrorException ex)
+            {
+                ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, ConsoleView.Current.Output + OutputStartTag + ex.Message + OutputEndTag);
+            }
+            catch (AggregateException ae)
             {
                 var sb = new System.Text.StringBuilder();
                 foreach (Exception ex in ae.InnerExceptions)
@@ -68,6 +109,7 @@ namespace AcuShell
         public IEnumerable ConsoleClearOutputAction(PXAdapter adapter)
         {
             ConsoleView.Cache.SetValueExt<ConsoleFields.output>(ConsoleView.Current, String.Empty);
+            CurrentState = null;
             return adapter.Get();
         }
     }

@@ -75,6 +75,43 @@ function AfterShowConsolePanel() {
             return summary.slice(0, endIndex).replace(/[\n\r]/g, ' ');
         }
 
+        var template = `using System;
+            using System.Collections;
+            using System.Collections.Generic;
+            using System.Linq;
+            using PX.Data;
+            using PX.Objects.GL;
+            using PX.Objects.CM;
+            using PX.Objects.CS;
+            using PX.Objects.CR;
+            using PX.Objects.TX;
+            using PX.Objects.IN;
+            using PX.Objects.EP;
+            using PX.Objects.AP;
+            using PX.TM;
+            using SOOrder = PX.Objects.SO.SOOrder;
+            using SOLine = PX.Objects.SO.SOLine;
+            using Avalara.AvaTax.Adapter;
+            using Avalara.AvaTax.Adapter.TaxService;
+            using AvaAddress = Avalara.AvaTax.Adapter.AddressService;
+            using AvaMessage = Avalara.AvaTax.Adapter.Message;
+            using PX.Objects;
+            using PX.Objects.PO;
+
+            namespace PX.Objects
+            {
+	            public class Console
+	            {
+                    public void Method()
+                    {
+{0}
+                    }
+	            }
+            }
+        `;
+
+        var templateLineNumber = 30;
+
         monaco.languages.registerCompletionItemProvider('csharp', {
             triggerCharacters: ["."],
             provideCompletionItems: function (model, position) {
@@ -90,10 +127,10 @@ function AfterShowConsolePanel() {
                 };
 
                 let params = {
-                    "Buffer": model.getValue(),
-                    "FileName": "Console.cs",
+                    "Buffer": template.replace('{0}', model.getValue()),
+                    "FileName": "C:\Program Files\Acumatica ERP\AcumaticaDemo2019R2\CstDesigner\Console_OmniSharp\Console.cs",
                     "Column": position.column,
-                    "Line": position.lineNumber,
+                    "Line": templateLineNumber,
                     "WantDocumentationForEveryCompletionResult": true,
                     "WantKind": true,
                     "WantReturnType": true,
@@ -158,7 +195,7 @@ function AfterShowConsolePanel() {
         //    provideSignatureHelp: function (model, position) {
         //        let params = {
         //            "Buffer": model.getValue(),
-        //            "FileName": "Console.cs",
+        //            "FileName": "C:\Program Files\Acumatica ERP\AcumaticaDemo2019R2\CstDesigner\Console_OmniSharp\Console.cs",
         //            "Column": position.column,
         //            "Line": position.lineNumber
         //        };
@@ -205,7 +242,7 @@ function AfterShowConsolePanel() {
         //    provideHover: function (model, position) {
         //        let params = {
         //            "Buffer": model.getValue(),
-        //            "FileName": "Console.cs",
+        //            "FileName": "C:\Program Files\Acumatica ERP\AcumaticaDemo2019R2\CstDesigner\Console_OmniSharp\Console.cs",
         //            "Column": position.column,
         //            "Line": position.lineNumber,
         //            "IncludeDocumentation": true,
@@ -230,7 +267,7 @@ function AfterShowConsolePanel() {
 
         editor = monaco.editor.create(document.getElementById('ctl00_pnlConsole_pnlConsoleEditor'), {
             language: 'csharp',
-            theme: 'vs-dark',
+            //theme: 'vs-dark', messes up intellisense. Maybe hc-black?
             wordWrap: 'on',
             automaticLayout: true,
             minimap: {

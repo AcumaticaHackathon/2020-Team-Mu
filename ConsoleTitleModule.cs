@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using PX.Common.Parser;
@@ -29,6 +30,8 @@ namespace AcuShell
 
         private void AppendPanels(ITitleModuleController controller)
         {
+            controller.Page.ClientScript.RegisterClientScriptInclude(controller.Page.GetType(), "Console", VirtualPathUtility.ToAbsolute("~/Scripts/console.js"));
+
             PXSmartPanel panel = new PXSmartPanel
             {
                 ID = _panelID,
@@ -38,16 +41,14 @@ namespace AcuShell
                 CaptionVisible = true,
                 AutoRepaint = true,
                 BlockPage = false,
-                LoadOnDemand = false,
+                LoadOnDemand = true, //Needed otherwise ClientEvents.AfterShow won't run on 2nd open of the panel
                 CreateOnDemand = CreateOnDemandMode.False,
                 AutoReload = true,
                 Position = PanelPosition.Manual,
             };
+            panel.ClientEvents.AfterShow = "AfterShowConsolePanel";
             panel.ApplyStyleSheetSkin(controller.Page);
-            panel.Style["position"] = "absolute";
-            panel.Style["top"] = "58px";
-            panel.Style["left"] = "1070px"; 
-            
+
             var ds = PXPage.GetDefaultDataSource(controller.Page);
             var viewName = ds.DataGraph.PrimaryView;
        

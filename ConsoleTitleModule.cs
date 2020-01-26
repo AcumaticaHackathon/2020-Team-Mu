@@ -35,7 +35,7 @@ namespace AcuShell
             PXSmartPanel panel = new PXSmartPanel
             {
                 ID = _panelID,
-                Width = Unit.Pixel(500),
+                Width = Unit.Pixel(750),
                 Height = Unit.Pixel(350),
                 Caption = "Acumatica Console",
                 CaptionVisible = true,
@@ -72,13 +72,13 @@ namespace AcuShell
             form.AutoSize.Enabled = true;
 
             var cc = form.TemplateContainer.Controls;
-            cc.Add(new PXHtmlView { ID = "pnlConsoleOutput", DataField = nameof(AcuShell.ConsoleFields.Output), Height = Unit.Pixel(200), Width = Unit.Percentage(100) });
+            cc.Add(new PXHtmlView { ID = "pnlConsoleOutput", DataField = nameof(AcuShell.ConsoleFields.Output), Height = Unit.Pixel(300), Width = Unit.Percentage(100) });
             cc.Add(new PXTextEdit { ID = "pnlConsoleInput", DataField = nameof(AcuShell.ConsoleFields.Input) });
             cc.Add(new PXTextEdit { ID = "pnlGraphType", DataField = nameof(AcuShell.ConsoleFields.GraphType) });
 
             ((IParserAccessor)panel).AddParsedSubObject(form);
 
-            var editor = new System.Web.UI.WebControls.Panel { ID = "pnlConsoleEditor", Height = Unit.Pixel(200), Width = Unit.Percentage(100) };
+            var editor = new System.Web.UI.WebControls.Panel { ID = "pnlConsoleEditor", Height = Unit.Pixel(150), Width = Unit.Percentage(100) };
             ((IParserAccessor)panel).AddParsedSubObject(editor);
 
             controller.AppendControl(panel);

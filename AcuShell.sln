@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.168
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "AcumaticaDemo2019R2", "http://localhost/AcumaticaDemo2019R2", "{38A85D35-91BD-4FE4-B6DE-3254D91D9DA4}"
+	ProjectSection(WebsiteProperties) = preProject
+		UseIISExpress = "false"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.8"
+		ProjectReferences = "{ada1b83b-91ee-418e-aa42-bc75864d0afc}|AcuShell.dll;"
+		Debug.AspNetCompiler.VirtualPath = "/AcumaticaDemo2019R2"
+		Debug.AspNetCompiler.PhysicalPath = "..\..\Program Files\Acumatica ERP\AcumaticaDemo2019R2\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\AcumaticaDemo2019R2\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/AcumaticaDemo2019R2"
+		Release.AspNetCompiler.PhysicalPath = "..\..\Program Files\Acumatica ERP\AcumaticaDemo2019R2\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\AcumaticaDemo2019R2\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		SlnRelativePath = "..\..\Program Files\Acumatica ERP\AcumaticaDemo2019R2\"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcuShell", "AcuShell.csproj", "{ADA1B83B-91EE-418E-AA42-BC75864D0AFC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{38A85D35-91BD-4FE4-B6DE-3254D91D9DA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38A85D35-91BD-4FE4-B6DE-3254D91D9DA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38A85D35-91BD-4FE4-B6DE-3254D91D9DA4}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{38A85D35-91BD-4FE4-B6DE-3254D91D9DA4}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{ADA1B83B-91EE-418E-AA42-BC75864D0AFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADA1B83B-91EE-418E-AA42-BC75864D0AFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADA1B83B-91EE-418E-AA42-BC75864D0AFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADA1B83B-91EE-418E-AA42-BC75864D0AFC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2024F7BD-3895-4642-99E5-1052C16450A7}
+	EndGlobalSection
+EndGlobal

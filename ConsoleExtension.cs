@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
@@ -26,9 +27,15 @@ namespace AcuShell
         {
             try
             {
-                //TODO: AppDomain.Current.Assemblies
-                var result = Task.Run(() => CSharpScript.EvaluateAsync<object>(ConsoleView.Current.Input,
-                    options: ScriptOptions.Default.WithReferences(typeof(PXGraph).Assembly), globals: Base)).Result;
+                var genericScope = typeof(ConsoleGlobalScope<>);
+                Type[] typeArgs = { Base.GetType() };
+                var typedScopedType = genericScope.MakeGenericType(typeArgs);
+                object typedScope = Activator.CreateInstance(typedScopedType);
+                ((IHaveGraph)typedScope).SetGraph(Base);
+
+                var assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(it => !it.IsDynamic && !it.ReflectionOnly && it.ManifestModule.Name != "<Unknown>");
+                var result = Task.Run(() => CSharpScript.EvaluateAsync<object>(ConsoleView.Current.Input, globalsType: typedScopedType,
+                    options: ScriptOptions.Default.WithReferences(assemblies), globals: typedScope)).Result;
             
                 if (result != null)
                 {
@@ -42,7 +49,7 @@ namespace AcuShell
             catch(AggregateException ae)
             {
                 var sb = new System.Text.StringBuilder();
-                foreach (CompilationErrorException ex in ae.InnerExceptions)
+                foreach (Exception ex in ae.InnerExceptions)
                 {
                     sb.AppendLine(ex.Message);
                 }
@@ -50,6 +57,26 @@ namespace AcuShell
             }
 
             return adapter.Get();
+        }
+    }
+
+    public interface IHaveGraph
+    {
+        void SetGraph(PXGraph graph);
+    }
+
+    public class ConsoleGlobalScope<T> : IHaveGraph
+        where T : PXGraph
+    {
+        public T Graph
+        {
+            get;
+            set;
+        }
+
+        public void SetGraph(PXGraph graph)
+        {
+            this.Graph = graph as T;
         }
     }
 

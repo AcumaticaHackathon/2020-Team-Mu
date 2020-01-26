@@ -70,7 +70,7 @@ namespace AcuShell
 
             var cc = form.TemplateContainer.Controls;
 
-            var consoleOutput = new PXHtmlView { ID = "pnlConsoleOutput", DataField = nameof(AcuShell.ConsoleFields.Output), Height = Unit.Pixel(200), Width = Unit.Percentage(99) };
+            var consoleOutput = new PXHtmlView { ID = "pnlConsoleOutput", DataField = nameof(AcuShell.ConsoleFields.Output), Height = Unit.Pixel(200), Width = Unit.Percentage(100) };
             consoleOutput.AutoSize.Enabled = true;
 
             cc.Add(consoleOutput);
@@ -78,7 +78,7 @@ namespace AcuShell
            
             ((IParserAccessor)panel).AddParsedSubObject(form);
 
-            var editor = new System.Web.UI.WebControls.Panel { ID = "pnlConsoleEditor", Height = Unit.Pixel(70), Width = Unit.Percentage(99) };
+            var editor = new System.Web.UI.WebControls.Panel { ID = "pnlConsoleEditor", Height = Unit.Pixel(70), Width = Unit.Percentage(100) };
             ((IParserAccessor)panel).AddParsedSubObject(editor);
 
             controller.AppendControl(panel);

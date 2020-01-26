@@ -20,7 +20,7 @@ namespace AcuShell
             {
                 PXAction runAction = PXNamedAction.AddAction(Base, Base.PrimaryItemType, nameof(ConsoleRunAction), "Run", new PXButtonDelegate(ConsoleRunAction));
                 PXAction clearOutputAction = PXNamedAction.AddAction(Base, Base.PrimaryItemType, nameof(ConsoleClearOutputAction), "ConsoleClearOutput", new PXButtonDelegate(ConsoleClearOutputAction));
-                ConsoleView.Cache.SetValueExt<ConsoleFields.graphType>(ConsoleView.Current, Base.GetType().FullName); //For code completion on Graph.
+                ConsoleView.Cache.SetValueExt<ConsoleFields.graphType>(ConsoleView.Current, PX.Api.CustomizedTypeManager.GetTypeNotCustomized(Base).FullName); //For code completion on Graph.
             }
         }
 

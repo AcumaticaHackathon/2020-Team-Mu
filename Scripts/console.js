@@ -130,6 +130,9 @@ using PX.Objects.SO;
             editor.setPosition(position);
         }
 
+        function lineNumbersFunc(originalLineNumber) {
+            return "Acumatica>";
+        }
         completionItemProvider = monaco.languages.registerCompletionItemProvider('csharp', {
             triggerCharacters: ["."],
             provideCompletionItems: function (model, position) {
@@ -288,10 +291,27 @@ using PX.Objects.SO;
             //theme: 'vs-dark', //vs-dark messes up intellisense. Maybe hc-black?
             wordWrap: 'on',
             automaticLayout: true,
+            lineNumbers: lineNumbersFunc,
             minimap: {
                 enabled: false
-            }
+            },
+            scrollbar: {
+                useShadows: false,
+                verticalHasArrows: true,
+                horizontalHasArrows: true,
+                vertical: 'hidden',
+                horizontal: 'hidden',
+                verticalScrollbarSize: 0,
+                horizontalScrollbarSize: 17,
+                arrowSize: 30
+            },
+            glyphMargin: false,
+            folding: false,
+            // Undocumented see https://github.com/Microsoft/vscode/issues/30795#issuecomment-410998882
+            lineDecorationsWidth: 10,
+            lineNumbersMinChars: 12
         });
+
 
         editor.history = new Array();
         editor.historyPos = -1;

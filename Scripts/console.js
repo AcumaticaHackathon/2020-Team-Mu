@@ -4,6 +4,9 @@ var editor = null;
 var completionItemProvider = null;
 var signatureHelpProvider = null;
 var hoverProvider = null;
+var enterBinding = null;
+var upArrowBinding = null;
+var downArrowBinding = null;
 
 function BeforeLoadConsolePanel() {
 }
@@ -116,6 +119,15 @@ using PX.Objects.SO;
 
             let graphType = px_alls['pnlGraphType'].getValue();
             return template.replace('{BUFFER}', buffer).replace('{GRAPH_TYPE}', graphType);
+        }
+
+        function popHistory() {
+            let valueAtPos = editor.history[editor.historyPos];
+            editor.setValue(valueAtPos);
+
+            let position = editor.getPosition();
+            position.column = valueAtPos.length + 1; //Move caret to end of line
+            editor.setPosition(position);
         }
 
         completionItemProvider = monaco.languages.registerCompletionItemProvider('csharp', {
@@ -281,11 +293,40 @@ using PX.Objects.SO;
             }
         });
 
-        var myBinding = editor.addCommand(monaco.KeyCode.Enter, function () {
-            if (editor.getValue() != '') {
+        editor.history = new Array();
+        editor.historyPos = -1;
+        
+        enterBinding = editor.addCommand(monaco.KeyCode.Enter, function () {
+            if (editor.getValue() !== '') {
+                editor.history.push(editor.getValue());
+                editor.historyPos = -1;
+
                 px_alls['pnlConsoleInput'].updateValue(editor.getValue());
-            editor.setValue('');
+                editor.setValue('');
                 px_alls['ds'].executeCallback('ConsoleRunAction');
+            }
+        });
+
+        upArrowBinding = editor.addCommand(monaco.KeyCode.UpArrow, function () {
+            if (editor.history.length > 0) {
+                if (editor.historyPos === -1) {
+                    //Start at the end of the history
+                    editor.historyPos = editor.history.length - 1;
+                    popHistory();
+                }
+                else {
+                    if (editor.historyPos > 0) {
+                        editor.historyPos--;
+                        popHistory();
+                    }
+                }
+            }
+        });
+
+        downArrowBinding = editor.addCommand(monaco.KeyCode.DownArrow, function () {
+            if (editor.historyPos !== -1 && editor.historyPos < editor.history.length - 1) {
+                editor.historyPos++;   
+                popHistory();
             }
         });
     });
@@ -296,6 +337,9 @@ function BeforeHideConsolePanel() {
     completionItemProvider.dispose();
     signatureHelpProvider.dispose();
     hoverProvider.dispose();
+    enterBinding.dispose();
+    upArrowBinding.dispose();
+    downArrowBinding.dispose();
     editor.dispose();
 }
 

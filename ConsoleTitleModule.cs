@@ -40,15 +40,14 @@ namespace AcuShell
                 BlockPage = false,
                 LoadOnDemand = false,
                 CreateOnDemand = CreateOnDemandMode.False,
-                AutoReload = true
+                AutoReload = true,
+                Position = PanelPosition.Manual,
             };
             panel.ApplyStyleSheetSkin(controller.Page);
-            panel.CreateOnDemand = CreateOnDemandMode.False;
-
-            //This may be needed to update the page behind the panel if we update any value from the console
-            //panel.CallBackMode.CommitChanges = true;
-            //panel.CallBackMode.PostData = PostDataMode.Page;
-
+            panel.Style["position"] = "absolute";
+            panel.Style["top"] = "58px";
+            panel.Style["left"] = "1070px"; 
+            
             var ds = PXPage.GetDefaultDataSource(controller.Page);
             var viewName = ds.DataGraph.PrimaryView;
        

@@ -57,11 +57,9 @@ namespace AcuShell
     public class ConsoleFields : IBqlTable
     {
         public abstract class input : IBqlField { }
-        [PXUIField(DisplayName = "Input")]
         public string Input { get; set; }
 
         public abstract class output : IBqlField { }
-        [PXUIField(DisplayName = "Output")]
         public string Output { get; set; }
     }
 }

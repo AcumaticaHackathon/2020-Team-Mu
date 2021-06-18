@@ -72,7 +72,11 @@ namespace AcuShell
             form.AutoSize.Enabled = true;
 
             var cc = form.TemplateContainer.Controls;
-            cc.Add(new PXHtmlView { ID = "pnlConsoleOutput", DataField = nameof(AcuShell.ConsoleFields.Output), Height = Unit.Pixel(300), Width = Unit.Percentage(100) });
+            var consoleOutput = new PXHtmlView { ID = "pnlConsoleOutput", DataField = nameof(AcuShell.ConsoleFields.Output), Height = Unit.Percentage(100), Width = Unit.Percentage(100), SkinID = "Label" };
+            consoleOutput.AutoSize.Enabled = true; //TODO: Fix resizing of the console output... doesn't work right now
+            consoleOutput.AutoSize.MinHeight = 500;
+            consoleOutput.AutoSize.Container = DockContainer.Parent;
+            cc.Add(consoleOutput);
             cc.Add(new PXTextEdit { ID = "pnlConsoleInput", DataField = nameof(AcuShell.ConsoleFields.Input) });
             cc.Add(new PXTextEdit { ID = "pnlGraphType", DataField = nameof(AcuShell.ConsoleFields.GraphType) });
 

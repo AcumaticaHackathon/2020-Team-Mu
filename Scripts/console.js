@@ -81,47 +81,6 @@ function AfterShowConsolePanel() {
             return summary.slice(0, endIndex).replace(/(<([^>]+)>)/ig, ' ').replace(/(\r\n|\n|\r)/gm, '');
         }
 
-        //Hackathon Shouldn't be hardcoded like that!
-        let templateBufferLineNumber = 27;
-        let fileName = "C:\\Program Files\\Acumatica ERP\\AcumaticaDemo2021R1\\CstDesigner\\Console_OmniSharp\\Console.cs";
-
-        function getParsedBuffer(buffer) {
-            let template = `using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using PX.Data;
-using PX.Common;
-using PX.Objects.GL;
-using PX.Objects.CM;
-using PX.Objects.CS;
-using PX.Objects.CR;
-using PX.Objects.TX;
-using PX.Objects.IN;
-using PX.Objects.EP;
-using PX.Objects.AP;
-using PX.TM;
-using PX.Objects;
-using PX.Objects.PO;
-using PX.Objects.SO;
-
-            namespace PX.Objects
-            {
-	            public class Console
-	            {
-                    public void Method()
-                    {
-                        var Graph = new {GRAPH_TYPE}();
-{BUFFER}
-                    }
-	            }               
-            }
-        `;
-
-            let graphType = px_alls['pnlGraphType'].getValue();
-            return template.replace('{BUFFER}', buffer).replace('{GRAPH_TYPE}', graphType);
-        }
-
         function popHistory() {
             let valueAtPos = editor.history[editor.historyPos];
             editor.setValue(valueAtPos);
@@ -142,17 +101,16 @@ using PX.Objects.SO;
                 if (word) wordToComplete = word.word;
 
                 var range = {
-                    startLineNumber: templateBufferLineNumber, 
-                    endLineNumber: templateBufferLineNumber,
+                    startLineNumber: 1, 
+                    endLineNumber: 1,
                     startColumn: word.startColumn,
                     endColumn: word.endColumn
                 };
 
                 let params = {
-                    "Buffer": getParsedBuffer(model.getValue()),
-                    "FileName": fileName,
+                    "Buffer": model.getValue(),
+                    "GraphType": px_alls['pnlGraphType'].getValue(),
                     "Column": position.column,
-                    "Line": templateBufferLineNumber,
                     "WantDocumentationForEveryCompletionResult": true,
                     "WantKind": true,
                     "WantReturnType": true,
@@ -216,10 +174,9 @@ using PX.Objects.SO;
             signatureHelpTriggerCharacters: ["(", ","],
             provideSignatureHelp: function (model, position) {
                 let params = {
-                    "Buffer": getParsedBuffer(model.getValue()),
-                    "FileName": fileName,
-                    "Column": position.column,
-                    "Line": templateBufferLineNumber
+                    "Buffer": model.getValue(),
+                    "GraphType": px_alls['pnlGraphType'].getValue(),
+                    "Column": position.column
                 };
 
                 return xhr('../../editor?c=signaturehelp', params).then(function (res) {
@@ -263,11 +220,10 @@ using PX.Objects.SO;
         hoverProvider = monaco.languages.registerHoverProvider('csharp', {
             provideHover: function (model, position) {
                 let params = {
-                    "Buffer": getParsedBuffer(model.getValue()),
-                    "FileName": fileName,
+                    "Buffer": model.getValue(),
+                    "GraphType": px_alls['pnlGraphType'].getValue(),
                     "Column": position.column,
-                    "Line": templateBufferLineNumber,
-                    "IncludeDocumentation": true,
+                    "IncludeDocumentation": true
                 };
 
                 return xhr('../../editor?c=typelookup', params).then(function (res) {

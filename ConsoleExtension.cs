@@ -12,6 +12,7 @@ namespace AcuShell
     {
         public static ScriptState<object> CurrentState { get; set; }
         public static Type CurrentType;
+        public static object CurrentGraphUID;
         public PXFilter<ConsoleFields> ConsoleView;
 
         public override void Initialize()
@@ -48,6 +49,7 @@ namespace AcuShell
                     "System.Collections.Generic",
                     "System.Linq",
                     "PX.Data",
+                    "PX.Common",
                     "PX.Objects.GL",
                     "PX.Objects.CM",
                     "PX.Objects.CS",
@@ -63,7 +65,7 @@ namespace AcuShell
                 };
 
                 ScriptState<object> result;
-                if(CurrentState == null || CurrentType != typeNotCustomized)
+                if(CurrentState == null || CurrentType != typeNotCustomized || CurrentGraphUID != Base.UID)
                 { 
                     result = Task.Run(() => CSharpScript.RunAsync<object>(ConsoleView.Current.Input, globalsType: typedScopedType,
                         options: ScriptOptions.Default
@@ -73,6 +75,7 @@ namespace AcuShell
 
                     CurrentState = result;
                     CurrentType = typeNotCustomized;
+                    CurrentGraphUID = Base.UID;
                 }
                 else
                 {

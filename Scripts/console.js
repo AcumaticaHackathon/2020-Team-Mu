@@ -82,8 +82,8 @@ function AfterShowConsolePanel() {
         }
 
         //Hackathon Shouldn't be hardcoded like that!
-        let templateBufferLineNumber = 26;
-        let fileName = "C:\\Program Files\\Acumatica ERP\\AcumaticaDemo2019R2\\CstDesigner\\Console_OmniSharp\\Console.cs";
+        let templateBufferLineNumber = 27;
+        let fileName = "C:\\Program Files\\Acumatica ERP\\AcumaticaDemo2021R1\\CstDesigner\\Console_OmniSharp\\Console.cs";
 
         function getParsedBuffer(buffer) {
             let template = `using System;
@@ -91,6 +91,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using PX.Data;
+using PX.Common;
 using PX.Objects.GL;
 using PX.Objects.CM;
 using PX.Objects.CS;
@@ -141,8 +142,8 @@ using PX.Objects.SO;
                 if (word) wordToComplete = word.word;
 
                 var range = {
-                    startLineNumber: templateBufferLineNumber, //position.lineNumber,
-                    endLineNumber: templateBufferLineNumber, //position.lineNumber,
+                    startLineNumber: templateBufferLineNumber, 
+                    endLineNumber: templateBufferLineNumber,
                     startColumn: word.startColumn,
                     endColumn: word.endColumn
                 };
@@ -151,7 +152,7 @@ using PX.Objects.SO;
                     "Buffer": getParsedBuffer(model.getValue()),
                     "FileName": fileName,
                     "Column": position.column,
-                    "Line": templateBufferLineNumber, //position.lineNumber
+                    "Line": templateBufferLineNumber,
                     "WantDocumentationForEveryCompletionResult": true,
                     "WantKind": true,
                     "WantReturnType": true,
@@ -311,7 +312,6 @@ using PX.Objects.SO;
             lineDecorationsWidth: 10,
             lineNumbersMinChars: 12
         });
-
 
         editor.history = new Array();
         editor.historyPos = -1;

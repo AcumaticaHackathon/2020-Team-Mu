@@ -23,7 +23,7 @@ namespace AcuShell
         private void AppendButton(ITitleModuleController controller)
         {
             var btn = new PXToolBarButton { Key = "console", Text = "Console" };
-            btn.Images.Normal = Sprite.Main.Design;
+            //btn.Images.Normal = Sprite.Main.Design;
             btn.PopupPanel = _panelID;
             controller.AppendToolbarItem(btn);
         }
